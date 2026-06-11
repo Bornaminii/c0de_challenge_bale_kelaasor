@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import HttpResponse
+from inbox.models import inbox_messages
 
-# Create your views here.
+
+def inbox(request):
+    messages = inbox_messages.objects.filter(reciver=request.user)
+    return HttpResponse(messages)
