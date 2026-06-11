@@ -13,5 +13,7 @@ def inbox(request, username, password):
         return HttpResponse("Invalid username or password")
 
     messages = inbox_messages.objects.filter(reciver=user)
-    content = "\n".join(str(m) for m in messages) or "No messages"
-    return HttpResponse(content)
+    txt = ''
+    for message in messages:
+        txt += f"message: {message.message}, sender: {message.sender}\n"
+    return HttpResponse(txt)
