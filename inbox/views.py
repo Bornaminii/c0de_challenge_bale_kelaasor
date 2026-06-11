@@ -4,11 +4,9 @@ from inbox.models import inbox_messages
 
 
 def inbox(request, username, password):
-    user = User.objects.get(username=username, password=password)
-    if user.check_password(password) and user.username == username:
-        messages = inbox_messages.objects.filter(reciver=request.user)
-        return HttpResponse(messages)
-    else:
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
         return HttpResponse("Invalid username or password")
 
     if not user.check_password(password):
