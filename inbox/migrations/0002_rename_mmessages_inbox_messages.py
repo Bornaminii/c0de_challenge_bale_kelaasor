@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RenameModel(
             old_name='mMessages',
-            new_name='inbox_messages',
+            new_name='InboxMessages',
         ),
     ]
