@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from inbox.models import inbox_messages
+from inbox.models import InboxMessages
 
 
 def inbox(request, username, password):
@@ -12,7 +12,7 @@ def inbox(request, username, password):
     if not user.check_password(password):
         return HttpResponse("Invalid username or password")
 
-    messages = inbox_messages.objects.filter(reciver=user)
+    messages = InboxMessages.objects.filter(reciver=user)
     txt = ''
     for message in messages:
         txt += f"message: {message.message}, sender: {message.sender}\n"
@@ -47,7 +47,7 @@ def send_massage(request, username, password, reciver_username, message):
 
 
 def create_massage(sender, message, reciver):
-    inbox_messages.objects.create(
+    InboxMessages.objects.create(
         sender=sender,
         reciver=reciver,
         message=message
