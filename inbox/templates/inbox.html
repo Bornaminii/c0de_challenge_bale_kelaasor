@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inbox</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f4f0; min-height: 100vh; padding: 2rem 1rem; }
+    .inbox-wrap { max-width: 620px; margin: 0 auto; }
+    .inbox-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+    h1 { font-size: 20px; font-weight: 500; color: #1a1a18; }
+    .count { font-size: 13px; color: #888; background: #fff; border: 0.5px solid #ddd; border-radius: 99px; padding: 2px 10px; }
+    .card { background: #fff; border: 0.5px solid #e5e3dc; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start; }
+    .avatar { width: 38px; height: 38px; border-radius: 50%; background: #e6f1fb; color: #0c447c; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+    .sender { font-size: 14px; font-weight: 500; color: #1a1a18; }
+    .meta { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .time { font-size: 12px; color: #aaa; }
+    .msg-text { font-size: 14px; color: #555; line-height: 1.55; }
+    .empty { text-align: center; padding: 3rem; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="inbox-wrap">
+    <div class="inbox-header">
+      <i class="ti ti-inbox" style="font-size:22px; color:#888;"></i>
+      <h1>Inbox</h1>
+      <span class="count">{{ messages|length }} message{{ messages|length|pluralize }}</span>
+    </div>
+
+    {% for msg in messages %}
+    <div class="card">
+      <div class="avatar">{{ msg.sender.username|slice:":2"|upper }}</div>
+      <div style="flex:1; min-width:0;">
+        <div class="meta">
+          <span class="sender">{{ msg.sender.username }}</span>
+          <span class="time">{{ msg.created_at|timesince }} ago</span>
+        </div>
+        <div class="msg-text">{{ msg.message }}</div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty">No messages yet.</div>
+    {% endfor %}
+  </div>
+</body>
+</html>
