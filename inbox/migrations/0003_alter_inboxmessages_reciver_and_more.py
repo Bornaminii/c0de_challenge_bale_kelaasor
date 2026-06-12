@@ -13,6 +13,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RenameModel(
+            old_name='inbox_messages',
+            new_name='InboxMessages',
+        ),
         migrations.AlterField(
             model_name='inboxmessages',
             name='reciver',
