@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from inbox.models import InboxMessages
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
 import json
 
 
@@ -15,44 +16,49 @@ def inbox(request, username, password):
     if not user.check_password(password):
         return HttpResponse("Password is not correct")
 
-    messages = user.recived_messages.order_by("id").all()
+    messages = user.recived_messages.order_by("-id").all()
     return render(request, "inbox.html", {"messages": messages})
 
-@csrf_exempt
-def send_massage(request, username, password):
-    # Validate sender user
-    try:
-        sender_user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return HttpResponse("Invalid username or password")
+# @csrf_exempt
+def send_message(request, username, password):
 
-    if not sender_user.check_password(password):
-        return HttpResponse("Invalid username or password")
+    if request.method == "GET":
+        return render(request, "send_message.html")
 
-    # Get body of request
-    body = json.loads(request.body)
-    
-    # Validate reciever user
-    reciever_username = body.get("reciever_username")
-    if not reciever_username:
-        return HttpResponse("reciever_username is required")
-    try:
-        reciever_user = User.objects.get(username=reciever_username)
-    except User.DoesNotExist:
-        return HttpResponse("Invalid reciver_username")
-    
-    # Validate message
-    message = body.get("message")
-    if not message:
-        return HttpResponse("message is required")
+    if request.method == "POST":
+        try:
+            sender_user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return HttpResponse("Invalid username or password")
 
-    create_massage(
-        sender=sender_user,
-        reciver=reciever_user,
-        message=message,
-    )
+        if not sender_user.check_password(password):
+            return HttpResponse("Invalid username or password")
+        
+        body = request.body
+        reciever_username = request.POST.get("reciever_username")
+        if not reciever_username:
+            messages.error(request, "reciever_username is required")
+            return render(request, "send_message.html")
+        try:
+            reciever_user = User.objects.get(username=reciever_username)
+        except User.DoesNotExist:
+            messages.error(request, "Invalid reciever_username")
+            return render(request, "send_message.html")
 
-    return HttpResponse("Message sent successfully")
+        message = request.POST.get("message")
+        if not message:
+            messages.error(request, "message is required")
+            return render(request, "send_message.html")
+
+        create_massage(
+            sender=sender_user,
+            reciver=reciever_user,
+            message=message,
+        )
+
+        messages.success(request, "Message sent successfully!")
+        return render(request, "send_message.html")
+
 
 
 def create_massage(sender, message, reciver):

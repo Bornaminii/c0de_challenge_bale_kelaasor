@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send a Message</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f4f0; min-height: 100vh; padding: 2rem 1rem; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    .page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+    h1 { font-size: 20px; font-weight: 500; color: #1a1a18; }
+    .card { background: #fff; border: 0.5px solid #e5e3dc; border-radius: 12px; padding: 1.5rem; }
+    label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; }
+    input, textarea { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: inherit; color: #1a1a18; background: #fff; outline: none; transition: border-color 0.15s; }
+    input:focus, textarea:focus { border-color: #888; }
+    textarea { resize: vertical; min-height: 110px; line-height: 1.55; }
+    .field { margin-bottom: 1rem; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .send-btn { width: 100%; background: #1a1a18; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 1.25rem; transition: opacity 0.15s; }
+    .send-btn:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="page-header">
+      <i class="ti ti-send" style="font-size:22px; color:#888;"></i>
+      <h1>Send a message</h1>
+    </div>
+    <div class="card">
+      {% if messages %}
+        {% for msg in messages %}
+          <p style="margin-bottom:1rem; padding:10px 14px; border-radius:8px;
+            {% if msg.tags == 'error' %} background:#fcebeb; color:#a32d2d;
+            {% else %} background:#eaf3de; color:#3b6d11; {% endif %}">
+            {{ msg }}
+          </p>
+        {% endfor %}
+      {% endif %}
+
+      <form id="send-form" method="POST" action="">
+        {% csrf_token %}
+        <div class="row">
+          <div class="field">
+            <label for="username">Your username</label>
+            <input id="username" name="username" type="text" placeholder="you" autocomplete="username">
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password">
+          </div>
+        </div>
+        <div class="field">
+          <label for="receiver">Recipient username</label>
+          <input id="receiver" name="reciever_username" type="text" placeholder="friend">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Write something…"></textarea>
+        </div>
+        <button type="submit" class="send-btn">
+          <i class="ti ti-send" style="font-size:16px;"></i>
+          Send
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('send-form').addEventListener('submit', function(e) {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      if (username && password) {
+        this.action = "{% url 'send-message' username='USERNAME' password='PASSWORD' %}"
+          .replace('USERNAME', encodeURIComponent(username))
+          .replace('PASSWORD', encodeURIComponent(password));
+      } else {
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
