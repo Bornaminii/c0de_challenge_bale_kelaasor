@@ -79,7 +79,7 @@ def token_generator(request, username, password):
 
     for number in username:
         number_int = int(number)
-        current = int(username[number_int - 1])
+        current = int(username[(number_int - 1) % len(username)])
         target = int(username[(current + number_int) % len(username)])
         new_num = number_int + int(target)
         pass_list.append(str(new_num))
