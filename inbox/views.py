@@ -67,3 +67,26 @@ def create_massage(sender, message, reciver):
         reciver=reciver,
         message=message
     )
+
+
+
+def token_generator(request, username, password):
+
+    username = User.objects.filter(username=username).values(username)
+    list(username)
+    pass_list = []
+
+    for number in username:
+        number_int = int(number)
+        current = int(username[number_int - 1])
+        target = int(username[(current + number_int) % 4])
+        new_num = number_int + int(target)
+        pass_list.append(str(new_num))
+        password_str = ''.join(pass_list)
+        # print(password_str)
+        return HttpResponse(password_str)
+
+
+
+
+
